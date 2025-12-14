@@ -1,0 +1,118 @@
+
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>边缘生活 - 生存模拟</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@700;900&family=Inter:wght@400;700;900&family=JetBrains+Mono:wght@700&display=swap" rel="stylesheet">
+    <script>
+      window.process = { env: { API_KEY: "" } };
+    </script>
+    <style>
+        :root {
+            --bg-color: #ffffff;
+            --text-color: #111111;
+            --industrial-blue: #2563eb;
+            --rust-red: #b91c1c;
+            --border-width: 3px;
+            --transition-smooth: all 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
+        }
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            overflow: hidden;
+            font-family: 'Inter', -apple-system, sans-serif;
+            -webkit-font-smoothing: antialiased;
+        }
+        
+        .font-serif { font-family: 'Noto Serif SC', serif; }
+        .font-mono { font-family: 'JetBrains Mono', monospace; }
+
+        /* 清爽动态背景 */
+        .art-bg {
+          position: fixed;
+          inset: 0;
+          z-index: -1;
+          background: #ffffff;
+          overflow: hidden;
+        }
+        
+        .art-bg-blob {
+          position: absolute;
+          width: 80vw;
+          height: 80vw;
+          filter: blur(120px);
+          opacity: 0.1;
+          border-radius: 50%;
+          z-index: -1;
+        }
+        
+        .blob-1 { background: #3b82f6; top: -20%; left: -20%; animation: slow-drift 40s infinite alternate; }
+        .blob-2 { background: #ef4444; bottom: -20%; right: -20%; animation: slow-drift 50s infinite alternate-reverse; }
+
+        @keyframes slow-drift {
+          from { transform: translate(0, 0); }
+          to { transform: translate(10%, 10%); }
+        }
+
+        /* 简化后的进场动效 */
+        @keyframes fadeInSafe { 
+          from { opacity: 0; transform: translateY(10px); } 
+          to { opacity: 1; transform: translateY(0); } 
+        }
+        .animate-up { animation: fadeInSafe 0.6s ease-out forwards; }
+
+        .btn-flat {
+            background: #ffffff;
+            border: var(--border-width) solid var(--text-color);
+            color: var(--text-color);
+            font-weight: 900;
+            transition: var(--transition-smooth);
+            cursor: pointer;
+            border-radius: 0;
+        }
+        .btn-flat:active { transform: scale(0.98); }
+        .btn-flat:hover { box-shadow: 4px 4px 0px 0px rgba(0,0,0,1); transform: translate(-2px, -2px); }
+
+        .btn-flat-filled {
+            background: var(--text-color);
+            color: #ffffff;
+            border: var(--border-width) solid var(--text-color);
+            font-weight: 900;
+            border-radius: 0;
+            transition: var(--transition-smooth);
+        }
+        .btn-flat-filled:hover { opacity: 0.9; box-shadow: 6px 6px 0px 0px rgba(0,0,0,0.1); }
+
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+        /* 极简报警动效 */
+        @keyframes pulse-subtle { 0%, 100% { opacity: 1; } 50% { opacity: 0.7; } }
+        .critical-stat { animation: pulse-subtle 2s infinite; color: #dc2626; }
+    </style>
+<script type="importmap">
+{
+  "imports": {
+    "react": "https://esm.sh/react@^19.2.3",
+    "react-dom/": "https://esm.sh/react-dom@^19.2.3/",
+    "react/": "https://esm.sh/react@^19.2.3/",
+    "@google/genai": "https://esm.sh/@google/genai@^1.33.0"
+  }
+}
+</script>
+<link rel="stylesheet" href="/index.css">
+</head>
+<body>
+    <div class="art-bg">
+      <div class="art-bg-blob blob-1"></div>
+      <div class="art-bg-blob blob-2"></div>
+    </div>
+    <div id="root"></div>
+    <script type="module" src="index.tsx"></script>
+<script type="module" src="/index.tsx"></script>
+</body>
+</html>
