@@ -1,0 +1,7 @@
+{
+  "name": "Copy of 边缘生活：伤痕",
+  "description": "一名矿区高三女生的残酷生存模拟。在高考、贫穷与堕落的边缘行走，每一个选择都在剥落你的灵魂。",
+  "requestFramePermissions": [
+    "geolocation"
+  ]
+}
