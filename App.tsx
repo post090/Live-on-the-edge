@@ -32,7 +32,6 @@ const App: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isPhoneOpen, setIsPhoneOpen] = useState(false);
-  const [finalEnding, setFinalEnding] = useState<{ id: string, title: string, content: string } | null>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -48,8 +47,7 @@ const App: React.FC = () => {
         ...INITIAL_GAME_STATE.stats,
         intelligence: attr.intelligence,
         appearance: attr.appearance,
-        // 体力不再换算，直接使用个位数
-        stamina: attr.stamina,
+        stamina: attr.stamina, 
         resilience: attr.resilience,
         savviness: attr.savviness
       }
@@ -110,9 +108,9 @@ const App: React.FC = () => {
 
   const handleChoice = (choiceIndex: number) => {
     if (!gameState || !currentEvent) return;
-    if (choiceIndex === -1) { setCurrentEvent(null); return; }
     const choice = currentEvent.choices[choiceIndex];
-    if (!choice || !checkRequirements(choice)) return;
+    if (!choice) return;
+    if (!checkRequirements(choice)) return;
 
     setResultData({
       text: choice.text,
@@ -134,10 +132,9 @@ const App: React.FC = () => {
       newStats[k] = Math.max(0, (newStats[k] || 0) + (val as number));
     });
 
-    // 调整自然消耗以匹配个位数体力和百分制状态
     newStats.satiety = Math.max(0, newStats.satiety - 12); 
     newStats.mood = Math.max(0, newStats.mood - 10);
-    newStats.stamina = Math.max(0, newStats.stamina - 0.5); // 个位数消耗更缓慢
+    newStats.stamina = Math.max(0, newStats.stamina - 0.5); 
     if (!newFlags.isMotherDead) newStats.motherHealth = Math.max(0, newStats.motherHealth - 2);
 
     const currentTimeIdx = TIME_ORDER.indexOf(gameState.timeOfDay);
@@ -149,16 +146,14 @@ const App: React.FC = () => {
       newStats.debt = Math.floor(newStats.debt * 1.20); 
     }
 
-    if (nextDay > 30) {
-      setScreen('ENDING'); 
-      return;
-    }
+    if (nextDay > 30) return;
 
-    // 体力耗尽昏迷逻辑 (个位数时 threshold 设为 0.5)
     if (newStats.stamina < 0.5) {
-      const faintEvent = FAINT_EVENTS.DEFAULT;
-      setCurrentEvent(faintEvent);
-      // 后续由昏迷抉择重置状态
+      const ns = {...newStats, stamina: 2, money: Math.max(0, newStats.money - 300)};
+      setGameState({ ...gameState, stats: ns, day: nextDay, timeOfDay: TIME_ORDER[nextTimeIdx] });
+      setResultData({ text: "昏迷", impact: "你由于体力耗尽在街头倒下，醒来时发现钱变少了。", changes: {} });
+      setScreen('RESULT');
+      return;
     }
 
     const newState: GameState = {
@@ -176,6 +171,22 @@ const App: React.FC = () => {
     setScreen('EXPLORE');
     setCurrentEvent(null);
     setResultData(null);
+  };
+
+  const renderStatChange = (key: string, value: number) => {
+    const labels: Record<string, string> = {
+      satiety: '饱腹', hygiene: '整洁', mood: '精神', money: '现金',
+      debt: '应还', academic: '学业', sin: '罪恶', stamina: '体力',
+      resilience: '韧性', savviness: '心眼', intelligence: '智力',
+      appearance: '魅力', motherHealth: '母亲健康'
+    };
+    const label = labels[key] || key;
+    const isPositive = value > 0;
+    return (
+      <div key={key} className={`text-[10px] font-black italic tracking-tight ${isPositive ? 'text-emerald-600' : 'text-red-600'}`}>
+        {label} {isPositive ? '+' : ''}{typeof value === 'number' ? value.toFixed(1) : value}
+      </div>
+    );
   };
 
   if (screen === 'TITLE') {
@@ -237,9 +248,7 @@ const App: React.FC = () => {
                   <p className="text-[10px] font-black opacity-40 leading-tight">里屋传来母亲剧烈的咳嗽声，撕心裂肺。</p>
                 </div>
              </div>
-             
              <div className="space-y-4 pb-20">
-                <div className="text-white text-[10px] font-black tracking-widest mb-2 opacity-50 uppercase">面对威胁，你的本能反应是？</div>
                 <button onClick={() => handlePrologueChoice('A')} className="w-full group flex flex-col items-start p-4 bg-black border-2 border-white/30 hover:border-white transition-all text-left">
                   <span className="text-emerald-500 text-xs font-black italic mb-1">🟢 选项 A：【沉默隐忍】</span>
                   <span className="text-white/80 text-sm font-bold group-hover:text-white">低头咬牙。（韧性+1, 精神-5）</span>
@@ -264,19 +273,6 @@ const App: React.FC = () => {
              <button onClick={finishPrologue} className="btn-flat-filled w-full py-5 text-2xl tracking-[1em] bg-black">开始生存</button>
           </div>
         )}
-      </div>
-    );
-  }
-
-  if (screen === 'ENDING' && finalEnding) {
-    return (
-      <div className="flex flex-col items-center justify-center min-h-screen p-10 bg-black text-white text-center grain-overlay">
-         <div className="mb-8 border-4 border-white p-4 inline-block">
-            <h1 className="text-4xl font-black italic mb-2 tracking-tighter">生存记录结算</h1>
-         </div>
-         <h2 className="text-3xl font-black text-red-600 mb-6 italic">{finalEnding.title}</h2>
-         <p className="text-lg font-serif leading-relaxed mb-12 max-w-lg italic font-black">“{finalEnding.content}”</p>
-         <button onClick={() => window.location.reload()} className="px-10 py-4 border-4 border-white text-white font-black hover:bg-white hover:text-black transition-all">重新轮回</button>
       </div>
     );
   }
@@ -308,8 +304,19 @@ const App: React.FC = () => {
         
         {screen === 'RESULT' && resultData && (
           <div className="flex-1 overflow-y-auto px-5 pt-6 pb-12 animate-up bg-slate-50">
-            <h2 className="text-2xl font-black italic border-l-[8px] border-black pl-4 mb-6">抉择代价</h2>
-            <div className="p-6 bg-white border-2 border-black mb-10 shadow-sm font-serif font-black italic">“{resultData.impact}”</div>
+            <h2 className="text-2xl font-black italic border-l-[8px] border-black pl-4 mb-6 tracking-tighter">抉择代价</h2>
+            <div className="bg-white border-2 border-black p-6 mb-6 shadow-sm font-serif font-black italic text-lg leading-relaxed">
+              “{resultData.impact}”
+            </div>
+            <div className="bg-white border-2 border-black p-4 mb-10">
+               <div className="text-[8px] font-black text-slate-400 uppercase mb-2 tracking-widest border-b border-black/5 pb-1">数值变动记录</div>
+               <div className="grid grid-cols-2 gap-y-2">
+                  {Object.entries(resultData.changes).length > 0 
+                    ? Object.entries(resultData.changes).map(([k, v]) => renderStatChange(k, v as number))
+                    : <span className="text-[10px] italic text-slate-400">无明显的生理或环境改变。</span>
+                  }
+               </div>
+            </div>
             <button onClick={() => finalizeStats(resultData.changes, resultData.newArea, resultData.specialAction)} className="btn-flat-filled w-full py-5 text-xl tracking-[0.8em] shadow-[10px_10px_0px_0px_rgba(0,0,0,1)]">继续挣扎</button>
           </div>
         )}
@@ -334,6 +341,12 @@ const App: React.FC = () => {
                     </button>
                   );
                 })}
+                <button 
+                  onClick={() => setCurrentEvent(null)}
+                  className="btn-flat w-full py-4 text-center border-black mt-4 hover:bg-slate-50 font-black text-sm uppercase tracking-widest"
+                >
+                  ← 离开这里
+                </button>
              </div>
           </div>
         )}

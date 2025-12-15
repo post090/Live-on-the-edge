@@ -50,7 +50,7 @@ const StatusBar: React.FC<Props> = ({ gameState, onMenuOpen, onPhoneOpen }) => {
   const MiniAttr = ({ label, value, color }: { label: string, value: number | string, color?: string }) => (
     <div className="flex flex-col items-center min-w-[34px]">
       <span className="text-[6px] font-black text-slate-400 uppercase leading-none mb-0.5">{label}</span>
-      <span className={`text-[9px] font-black italic leading-none ${color || 'text-black'}`}>{value}</span>
+      <span className={`text-[9px] font-black italic leading-none ${color || 'text-black'}`}>{typeof value === 'number' ? value.toFixed(1) : value}</span>
     </div>
   );
 
@@ -109,7 +109,6 @@ const StatusBar: React.FC<Props> = ({ gameState, onMenuOpen, onPhoneOpen }) => {
       {/* 分区 4: 属性 (体力/智力/魅力/心眼/韧性) 与 罪恶 */}
       <div className="p-2 flex flex-col gap-2 bg-white border-b border-black/5">
         <div className="flex justify-between items-center px-0.5">
-          {/* 核心属性组 - 全个位数 */}
           <div className="flex gap-2.5">
             <MiniAttr label="体力" value={stats.stamina} color="text-emerald-700" />
             <MiniAttr label="智力" value={stats.intelligence} />
@@ -117,7 +116,6 @@ const StatusBar: React.FC<Props> = ({ gameState, onMenuOpen, onPhoneOpen }) => {
             <MiniAttr label="心眼" value={stats.savviness} color="text-zinc-900" />
             <MiniAttr label="韧性" value={stats.resilience} color="text-amber-600" />
           </div>
-          {/* 特殊区隔 */}
           <div className="flex gap-2.5 border-l-2 border-black/10 pl-3">
             <MiniAttr label="罪恶" value={stats.sin} color="text-red-900" />
           </div>
