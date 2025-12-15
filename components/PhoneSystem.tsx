@@ -6,11 +6,12 @@ import { YUEYUE_USERS, GRAY_TASKS, PRODUCTS } from '../constants';
 interface Props {
   gameState: GameState;
   onUpdateStats: (changes: Partial<Stats>) => void;
+  onPurchaseItem: (product: Product) => void;
   onClose: () => void;
   onMarkMessageRead: (msgId: string) => void;
 }
 
-const PhoneSystem: React.FC<Props> = ({ gameState, onUpdateStats, onClose, onMarkMessageRead }) => {
+const PhoneSystem: React.FC<Props> = ({ gameState, onUpdateStats, onPurchaseItem, onClose, onMarkMessageRead }) => {
   const [activeApp, setActiveApp] = useState<'HOME' | 'SOCIAL' | 'VIDEO' | 'SHOP' | 'YUEYUE' | 'TG' | 'LOAN'>('HOME');
   const [selectedChatId, setSelectedChatId] = useState<string | null>(null);
 
@@ -26,8 +27,8 @@ const PhoneSystem: React.FC<Props> = ({ gameState, onUpdateStats, onClose, onMar
       alert("淘货网：账户余额不足。在这个世界上，连生存都需要预付代价。");
       return;
     }
-    onUpdateStats({ ...product.impact, money: -product.price });
-    alert(`成功购买 ${product.name}。你在消费中感到一丝虚幻的权力感。`);
+    onPurchaseItem(product);
+    alert(`成功购买 ${product.name}。你在消费中感到一丝虚幻的权力感。物品已存入背包。`);
   };
 
   const handleBorrow = (amount: number) => {
@@ -64,7 +65,7 @@ const PhoneSystem: React.FC<Props> = ({ gameState, onUpdateStats, onClose, onMar
 
   const renderHome = () => (
     <div className="flex-1 grid grid-cols-3 gap-6 p-8 content-start bg-slate-100 h-full">
-      <AppIcon label="沉默通讯" icon="✉" bg="bg-blue-600" onClick={() => setActiveApp('SOCIAL')} badge={unreadCount} />
+      <AppIcon label="沉默通讯" icon="📱" bg="bg-blue-600" onClick={() => setActiveApp('SOCIAL')} badge={unreadCount} />
       <AppIcon label="快见视频" icon="▶" bg="bg-red-600" onClick={() => setActiveApp('VIDEO')} />
       <AppIcon label="淘货网" icon="🛒" bg="bg-amber-500" onClick={() => setActiveApp('SHOP')} />
       <AppIcon label="约约" icon="💜" bg="bg-purple-600" onClick={() => setActiveApp('YUEYUE')} />
@@ -223,7 +224,7 @@ const PhoneSystem: React.FC<Props> = ({ gameState, onUpdateStats, onClose, onMar
            </div>
            <div className="h-14 border-t-4 border-black bg-white flex items-center justify-around shrink-0 z-50">
               <button onClick={() => setActiveApp('HOME')} className={`text-xl ${activeApp === 'HOME' ? 'scale-125 grayscale-0' : 'grayscale opacity-50'}`}>🏠</button>
-              <button onClick={() => setActiveApp('SOCIAL')} className={`text-xl ${activeApp === 'SOCIAL' ? 'scale-125 grayscale-0' : 'grayscale opacity-50'}`}>✉</button>
+              <button onClick={() => setActiveApp('SOCIAL')} className={`text-xl ${activeApp === 'SOCIAL' ? 'scale-125 grayscale-0' : 'grayscale opacity-50'}`}>📱</button>
               <button onClick={() => setActiveApp('SHOP')} className={`text-xl ${activeApp === 'SHOP' ? 'scale-125 grayscale-0' : 'grayscale opacity-50'}`}>🛒</button>
            </div>
         </div>

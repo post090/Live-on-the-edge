@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect, useRef } from 'react';
-import { GameState, Attributes, AIRootResponse, Stats, AvatarConfig, LocationInfo, Choice } from './types';
+import { GameState, Attributes, AIRootResponse, Stats, AvatarConfig, LocationInfo, Choice, Product } from './types';
 import { INITIAL_GAME_STATE, TIME_ORDER, LOCATIONS, TIME_LABELS, LOCATION_INTERACTIONS, DAYS_OF_WEEK, FAINT_EVENTS } from './constants';
 import { getLocalStatusSummary } from './logic/statusSystem';
 import CharacterCreation from './components/CharacterCreation';
@@ -8,6 +8,7 @@ import StatusBar from './components/StatusBar';
 import GameMenu from './components/GameMenu';
 import MiniMap from './components/MiniMap';
 import PhoneSystem from './components/PhoneSystem';
+import Inventory from './components/Inventory';
 import ArtisticAvatar from './components/ArtisticAvatar';
 
 type Screen = 'TITLE' | 'CREATION' | 'PROLOGUE' | 'EXPLORE' | 'RESULT' | 'ENDING';
@@ -32,6 +33,7 @@ const App: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isPhoneOpen, setIsPhoneOpen] = useState(false);
+  const [isInventoryOpen, setIsInventoryOpen] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -173,6 +175,25 @@ const App: React.FC = () => {
     setResultData(null);
   };
 
+  const handlePurchaseItem = (product: Product) => {
+    if (!gameState) return;
+    const ns = { ...gameState.stats };
+    Object.entries(product.impact).forEach(([k, v]) => {
+      const key = k as keyof Stats;
+      ns[key] = Math.max(0, ns[key] + (v as number));
+    });
+    ns.money = Math.max(0, ns.money - product.price);
+
+    setGameState({
+      ...gameState,
+      stats: ns,
+      phone: {
+        ...gameState.phone,
+        products: [...(gameState.phone.products || []), product]
+      }
+    });
+  };
+
   const renderStatChange = (key: string, value: number) => {
     const labels: Record<string, string> = {
       satiety: '饱腹', hygiene: '整洁', mood: '精神', money: '现金',
@@ -281,16 +302,36 @@ const App: React.FC = () => {
 
   return (
     <div className="flex flex-col h-screen relative bg-white overflow-hidden font-sans">
-      <StatusBar gameState={gameState} onMenuOpen={() => setIsMenuOpen(true)} onPhoneOpen={() => setIsPhoneOpen(true)} />
+      <StatusBar 
+        gameState={gameState} 
+        onMenuOpen={() => setIsMenuOpen(true)} 
+        onPhoneOpen={() => setIsPhoneOpen(true)}
+        onInventoryOpen={() => setIsInventoryOpen(true)}
+      />
       <GameMenu isOpen={isMenuOpen} onClose={() => setIsMenuOpen(false)} gameState={gameState} onLoad={s => setGameState(s)} onRestart={() => window.location.reload()} />
-      {isPhoneOpen && <PhoneSystem gameState={gameState} onClose={() => setIsPhoneOpen(false)} onUpdateStats={ch => {
-          const ns = {...gameState.stats};
-          Object.entries(ch).forEach(([k,v]) => {
-            const key = k as keyof Stats;
-            ns[key] = Math.max(0, ns[key] + (v as number));
-          });
-          setGameState({...gameState, stats: ns});
-      }} onMarkMessageRead={() => {}} />}
+      {isPhoneOpen && (
+        <PhoneSystem 
+          gameState={gameState} 
+          onClose={() => setIsPhoneOpen(false)} 
+          onUpdateStats={ch => {
+            const ns = {...gameState.stats};
+            Object.entries(ch).forEach(([k,v]) => {
+              const key = k as keyof Stats;
+              ns[key] = Math.max(0, ns[key] + (v as number));
+            });
+            setGameState({...gameState, stats: ns});
+          }}
+          onPurchaseItem={handlePurchaseItem}
+          onMarkMessageRead={() => {}} 
+        />
+      )}
+      
+      {isInventoryOpen && (
+        <Inventory 
+          gameState={gameState} 
+          onClose={() => setIsInventoryOpen(false)} 
+        />
+      )}
       
       <main className="flex-1 mt-[185px] overflow-hidden flex flex-col">
         {screen === 'EXPLORE' && !currentEvent && (

@@ -1,4 +1,3 @@
-
 import { GameState, LocationInfo, AIRootResponse, Message, ShortVideo, Product } from './types';
 
 export const INITIAL_POINTS = 20;
@@ -57,12 +56,106 @@ export const YUEYUE_USERS = [
 ];
 
 export const LOCATION_INTERACTIONS: Record<string, Record<string, AIRootResponse>> = {
-  HOME: { ANY: { title: "霉味的家", description: "破床和药瓶。这是避风港，也是靶子。", is_final: true, speakerId: 'MOTHER', choices: [ { text: "深度睡眠", impact_description: "不做梦是最大的奢侈。", stat_changes: { stamina: 3, mood: 4, satiety: -10 } }, { text: "搜刮旧物 (需心眼>5)", impact_description: "你在柜底找到了父亲藏的旧票据和几十块钱。现金+35", stat_changes: { money: 35, mood: -5 }, requirements: { savviness: 5 } }, { text: "接待讨债人 (求饶)", impact_description: "你苦苦哀求，他们宽限了一天。韧性-1", stat_changes: { resilience: -1, mood: -15 } } ] } },
-  SCHOOL: { ANY: { title: "高三二班", description: "这里是通往光明的正道，但路很窄。", is_final: true, speakerId: 'CHEN_YI', choices: [ { text: "死磕复习", impact_description: "这让你暂时忘记了债主。", stat_changes: { academic: 2, intelligence: 0.1, stamina: -1, mood: -15, satiety: -15 } }, { text: "偷窃试卷 (需心眼>7)", impact_description: "你把考卷揣进怀里。学业+3(虚假), 罪恶+3", stat_changes: { academic: 3, sin: 3, mood: -25 }, requirements: { savviness: 7 } } ] } },
-  RUINS: { ANY: { title: "矿区废墟", description: "法外之地，寒风凛冽。", is_final: true, speakerId: 'OLD_MINER', choices: [ { text: "拾荒", impact_description: "你翻找着废铁，有所收获。", stat_changes: { money: 12, stamina: -2, hygiene: -20 } }, { text: "“纸飞机”取货", impact_description: "你挖出了违禁包裹。现金+650, 罪恶+4", stat_changes: { money: 650, sin: 4, mood: -15, stamina: -1 } }, { text: "黑吃黑 (需心眼>8)", impact_description: "你伏击了落单的混混。现金+350, 精神-4, 罪恶+5", stat_changes: { money: 350, mood: -4, sin: 5, stamina: -3 }, requirements: { savviness: 8 } } ] } },
-  CLUB: { ANY: { title: "红太阳舞厅", description: "这里是接触“社会”的第一站。", is_final: true, speakerId: 'BOSS', choices: [ { text: "做服务生", impact_description: "忍受客人的污言秽语。", stat_changes: { money: 45, stamina: -2, mood: -18, hygiene: -20 } }, { text: "线下接单 (陪酒)", impact_description: "你喝下了那杯苦涩的酒。现金+320, 整洁-85, 精神-35", stat_changes: { money: 320, hygiene: -85, mood: -35, sin: 2, stamina: -1 } }, { text: "购买情报 (¥200)", impact_description: "保安告诉你：刀哥明晚要来你家。", stat_changes: { money: -200 } } ] } },
-  STATION: { ANY: { title: "火车站", description: "连接地狱与人间的通道。", is_final: true, choices: [ { text: "前往省城 (¥250)", impact_description: "你想去霓虹灯下看看。", stat_changes: { money: -250 }, new_area: 'PROVINCIAL_CAPITAL' }, { text: "练习扒窃 (需心眼>6)", impact_description: "你顺走了一个男人的钱包。现金+9, 罪恶+2", stat_changes: { money: 9, sin: 2, mood: -15 }, requirements: { savviness: 6 } }, { text: "张贴小广告", impact_description: "你忍受着白眼和谩骂。现金+4, 韧性-1, stamina: -2", stat_changes: { money: 4, resilience: -1, stamina: -2 } } ] } },
-  BATH: { ANY: { title: "公共澡堂", description: "洗去煤灰，才能像个人样。", is_final: true, choices: [ { text: "洗澡 (¥75)", impact_description: "热水让你感到片刻安宁。", stat_changes: { money: -75, hygiene: 70, mood: 8 } }, { text: "更衣室摸奖 (需心眼>8)", impact_description: "你撬开了柜锁。获得现金和一块旧手表。现金+12, 罪恶+3", stat_changes: { money: 12, sin: 3, mood: -20 }, requirements: { savviness: 8 } } ] } },
+  // 黑岭镇 (Map A)
+  HOME: { ANY: { 
+    title: "霉味的家", description: "只有一张破床和满地药瓶。你的避风港，也是债主的靶子。", is_final: true, 
+    choices: [ 
+      { text: "A. 【深度睡眠】", impact_description: "不做梦是最大的奢侈。", stat_changes: { stamina: 5, mood: 10 } }, 
+      { text: "B. 【搜刮旧物】 (需心眼>3)", impact_description: "你在柜底找到了父亲藏的私房钱。", stat_changes: { money: 125, savviness: 0.1 }, requirements: { savviness: 3 } }, 
+      { text: "C. 【接待讨债人】 (求饶)", impact_description: "你苦苦哀求，他们宽限了一天。", stat_changes: { resilience: -1, mood: -15 } } 
+    ] 
+  }},
+  SCHOOL: { ANY: { 
+    title: "高三二班", description: "卷子堆得像坟头。这是通往光明的唯一正道，但路很窄。", is_final: true, 
+    choices: [ 
+      { text: "A. 【死磕复习】", impact_description: "你沉浸在题海中，暂时忘记了现实的寒冷。", stat_changes: { academic: 5, intelligence: 0.2, stamina: -1, mood: -5 } }, 
+      { text: "B. 【校园倒卖】", impact_description: "你将身上的一些玩意高价卖给了好奇的同学。", stat_changes: { money: 200, academic: -5, savviness: 0.5 } }, 
+      { text: "C. 【偷窃试卷】 (需心眼>5)", impact_description: "你趁办公室没人，偷出了下周的模拟题。", stat_changes: { academic: 50, sin: 10, mood: -20 }, requirements: { savviness: 5 } } 
+    ] 
+  }},
+  RUINS: { ANY: { 
+    title: "矿区废墟", description: "被封锁的旧矿井，法外之地，寒风凛冽。", is_final: true, 
+    choices: [ 
+      { text: "A. 【拾荒】", impact_description: "你翻找着废铁，满手乌黑，极其低效。", stat_changes: { money: 30, stamina: -2, hygiene: -30 } }, 
+      { text: "B. 【“纸飞机”取货】", impact_description: "你挖出了违禁包裹，心脏狂跳。", stat_changes: { money: 1000, sin: 20, mood: -10, stamina: -1 } }, 
+      { text: "C. 【黑吃黑】 (需心眼>6)", impact_description: "你伏击了交易的小混混。", stat_changes: { money: 1200, mood: -20, sin: 30, stamina: -3 }, requirements: { savviness: 6 } } 
+    ] 
+  }},
+  CLUB: { ANY: { 
+    title: "红太阳舞厅", description: "劣质香水味。这里是元一接触“社会”的第一站。", is_final: true, 
+    choices: [ 
+      { text: "A. 【做服务生】", impact_description: "忍受客人的污言秽语，你捡到了一个打火机。", stat_changes: { money: 80, stamina: -1.5, mood: 5 } }, 
+      { text: "B. 【线下接单】 (陪酒)", impact_description: "你喝下了那杯苦涩的酒，忍受着骚扰。", stat_changes: { money: 500, hygiene: -50, mood: -15, sin: 5, stamina: -1 } }, 
+      { text: "C. 【购买情报】 (¥50)", impact_description: "保安收了烟，告诉你债主刀哥的行踪。", stat_changes: { money: -50, savviness: 1 }, requirements: { money: 50 } } 
+    ] 
+  }},
+  STATION: { ANY: { 
+    title: "火车站", description: "连接地狱与人间的通道。三教九流汇聚。", is_final: true, 
+    choices: [ 
+      { text: "A. 【前往省城】 (¥50)", impact_description: "你想去霓虹灯下看看。", stat_changes: { money: -50 }, new_area: 'PROVINCIAL_CAPITAL', requirements: { money: 50 } }, 
+      { text: "B. 【练习扒窃】 (需心眼>4)", impact_description: "你顺走了一个旅客的钱包。", stat_changes: { money: 180, sin: 10, stamina: -1 }, requirements: { savviness: 4 } }, 
+      { text: "C. 【张贴小广告】", impact_description: "你贴着办证广告，忍受着白眼和谩骂。", stat_changes: { money: 80, resilience: -0.5, stamina: -1.5 } } 
+    ] 
+  }},
+  BATH: { ANY: { 
+    title: "公共澡堂", description: "恢复整洁的唯一场所。洗去煤灰，才能像个人样。", is_final: true, 
+    choices: [ 
+      { text: "A. 【洗澡】 (¥15)", impact_description: "热水让你感到片刻安宁。", stat_changes: { money: -15, hygiene: 100, mood: 5 }, requirements: { money: 15 } }, 
+      { text: "B. 【更衣室摸奖】 (需心眼>5)", impact_description: "你撬开了柜锁，拿走了里面的手表和现金。", stat_changes: { money: 250, sin: 15, mood: -20 }, requirements: { savviness: 5 } }, 
+      { text: "C. 【听墙根】", impact_description: "你在迷雾中偷听到大佬的谈话，获得了某些内幕。", stat_changes: { savviness: 1.5 } } 
+    ] 
+  }},
+
+  // 省城 (Map B)
+  SQUARE: { ANY: { 
+    title: "省城站前广场", description: "霓虹紫。混乱的集散地，充满骗子和流浪汉。", is_final: true, 
+    choices: [ 
+      { text: "A. 【长椅过夜】", impact_description: "省下了住宿费，但有概率被偷钱。", stat_changes: { stamina: 1, hygiene: -20, mood: -10 } }, 
+      { text: "B. 【乞讨/卖惨】 (需整洁<20)", impact_description: "路人投来了同情的硬币。", stat_changes: { money: 120, mood: -10, appearance: -1 }, requirements: { hygiene: 20 } }, 
+      { text: "C. 【购买假证】 (¥200)", impact_description: "你拥有了一个可以出入网吧或开房的虚假身份。", stat_changes: { money: -200, sin: 5, savviness: 1 }, requirements: { money: 200 } },
+      { text: "D. 【买票返回黑岭】 (¥50)", impact_description: "你最终决定回到那个熟悉且压抑的地方。", stat_changes: { money: -50 }, new_area: 'MINING_TOWN', requirements: { money: 50 } }
+    ] 
+  }},
+  MARKET: { ANY: { 
+    title: "综合批发市场", description: "倒爷的天堂，也是苦力的地狱。", is_final: true, 
+    choices: [ 
+      { text: "A. 【进货】 (¥500)", impact_description: "你买了一些电子垃圾和盗版书。", stat_changes: { money: -500, savviness: 0.5 }, requirements: { money: 500 } }, 
+      { text: "B. 【做搬运工】", impact_description: "纯卖力气，你的肩膀磨破了皮，但赚得多一些。", stat_changes: { money: 150, stamina: -4, hygiene: -30 } }, 
+      { text: "C. 【走私接头】", impact_description: "你帮人把违禁品藏在货车底盘运回黑岭。", stat_changes: { money: 2000, sin: 30, mood: -20, stamina: -1 } } 
+    ] 
+  }},
+  CYBER: { ANY: { 
+    title: "赛博电脑城", description: "冷光蓝。假货横行，信息集散地。", is_final: true, 
+    choices: [ 
+      { text: "A. 【销赃】", impact_description: "你卖掉了从黑岭弄来的手机，价格不错。", stat_changes: { money: 500, sin: 10 } }, 
+      { text: "B. 【找黑客“强子”】 (¥5000)", impact_description: "强子帮你搞到了高考题库，智力爆发。", stat_changes: { money: -5000, intelligence: 3, academic: 100 }, requirements: { money: 5000 } }, 
+      { text: "C. 【购买装备】 (¥800)", impact_description: "你买到了针孔摄像头和窃听器。", stat_changes: { money: -800, savviness: 2 }, requirements: { money: 800 } } 
+    ] 
+  }},
+  CLINIC: { ANY: { 
+    title: "地下黑诊所", description: "只要有钱，什么都能治，也什么都敢收。", is_final: true, 
+    choices: [ 
+      { text: "A. 【卖血】", impact_description: "抽完血后，你感到天旋地转，但救急够了。", stat_changes: { money: 800, stamina: -4, resilience: -1 } }, 
+      { text: "B. 【购买“聪明药”】 (¥1200)", impact_description: "这种药能让你效率翻倍，但你会逐渐上瘾。", stat_changes: { money: -1200, academic: 40, mood: -10, stamina: -2 }, requirements: { money: 1200 } }, 
+      { text: "C. 【治疗隐疾】 (¥500)", impact_description: "你治疗了身体的创伤和隐疾。", stat_changes: { money: -500, motherHealth: 10 }, requirements: { money: 500 } } 
+    ] 
+  }},
+  UNI: { ANY: { 
+    title: "虚构大学城", description: "你梦寐以求的地方，但你需要门票。", is_final: true, 
+    choices: [ 
+      { text: "A. 【潜入旁听】 (需整洁>80)", impact_description: "你在教室后排听了一节课，学到了很多。", stat_changes: { academic: 20, intelligence: 0.5, mood: 15 }, requirements: { hygiene: 80 } }, 
+      { text: "B. 【寻找“枪手”】 (¥10000)", impact_description: "中介收了钱，承诺会有人替考。", stat_changes: { money: -10000, sin: 50, mood: -30 }, requirements: { money: 10000 } }, 
+      { text: "C. 【钓鱼诈骗】", impact_description: "你伪装成学生骗取生活费，钱到账了。", stat_changes: { money: 500, savviness: 1, sin: 15 } } 
+    ] 
+  }},
+  HOTEL: { ANY: { 
+    title: "金皇朝大酒店", description: "富豪的销金窟，普通人的禁地。", is_final: true, 
+    choices: [ 
+      { text: "A. 【高端局】 (需魅力>8)", impact_description: "你出卖了最后的尊严，灵魂彻底崩坏。", stat_changes: { money: 5000, mood: -100, sin: 80, appearance: 1 }, requirements: { appearance: 8 } }, 
+      { text: "B. 【捉奸勒索】 (需心眼>7)", impact_description: "你拍下了权贵的丑闻，勒索成功。", stat_changes: { money: 15000, sin: 40, savviness: 2 }, requirements: { savviness: 7 } }, 
+      { text: "C. 【清洗罪证】 (¥10000)", impact_description: "你找律师抹去了案底。", stat_changes: { money: -10000, sin: -50 }, requirements: { money: 10000 } } 
+    ] 
+  }},
 };
 
 export const INITIAL_GAME_STATE: GameState = {

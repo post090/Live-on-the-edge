@@ -8,9 +8,10 @@ interface Props {
   gameState: GameState;
   onMenuOpen: () => void;
   onPhoneOpen: () => void;
+  onInventoryOpen: () => void;
 }
 
-const StatusBar: React.FC<Props> = ({ gameState, onMenuOpen, onPhoneOpen }) => {
+const StatusBar: React.FC<Props> = ({ gameState, onMenuOpen, onPhoneOpen, onInventoryOpen }) => {
   const { stats, day, timeOfDay, location, phone } = gameState;
   const unreadMessages = phone.messages.filter(m => !m.isRead).length;
 
@@ -67,8 +68,11 @@ const StatusBar: React.FC<Props> = ({ gameState, onMenuOpen, onPhoneOpen }) => {
           <span className="text-[7px] font-black text-slate-500 ml-1 truncate max-w-[80px] border-l border-white/20 pl-2">{location}</span>
         </div>
         <div className="flex items-center gap-4">
+          <button onClick={onInventoryOpen} className="relative active:scale-90 transition-transform">
+             <span className="text-lg">🎒</span>
+          </button>
           <button onClick={onPhoneOpen} className="relative active:scale-90 transition-transform">
-             <span className="text-lg">✉</span>
+             <span className="text-lg">📱</span>
              {unreadMessages > 0 && <span className="absolute -top-1 -right-1 w-2 h-2 bg-red-600 rounded-full border border-black animate-bounce"></span>}
           </button>
           <button onClick={onMenuOpen} className="text-base">☰</button>
