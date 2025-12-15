@@ -62,7 +62,8 @@ export const LOCATION_INTERACTIONS: Record<string, Record<string, AIRootResponse
     choices: [ 
       { text: "A. 【深度睡眠】", impact_description: "不做梦是最大的奢侈。", stat_changes: { stamina: 5, mood: 10 } }, 
       { text: "B. 【搜刮旧物】 (需心眼>3)", impact_description: "你在柜底找到了父亲藏的私房钱。", stat_changes: { money: 125, savviness: 0.1 }, requirements: { savviness: 3 } }, 
-      { text: "C. 【接待讨债人】 (求饶)", impact_description: "你苦苦哀求，他们宽限了一天。", stat_changes: { resilience: -1, mood: -15 } } 
+      { text: "C. 【接待讨债人】 (求饶)", impact_description: "你苦苦哀求，他们宽限了一天。", stat_changes: { resilience: -1, mood: -15 } },
+      { text: "D. 【煮碗挂面】 (¥5)", impact_description: "一碗白面，热气腾腾，让你想起了以前。", stat_changes: { money: -5, satiety: 20, mood: 5 }, requirements: { money: 5 } }
     ] 
   }},
   SCHOOL: { ANY: { 
@@ -86,7 +87,8 @@ export const LOCATION_INTERACTIONS: Record<string, Record<string, AIRootResponse
     choices: [ 
       { text: "A. 【做服务生】", impact_description: "忍受客人的污言秽语，你捡到了一个打火机。", stat_changes: { money: 80, stamina: -1.5, mood: 5 } }, 
       { text: "B. 【线下接单】 (陪酒)", impact_description: "你喝下了那杯苦涩的酒，忍受着骚扰。", stat_changes: { money: 500, hygiene: -50, mood: -15, sin: 5, stamina: -1 } }, 
-      { text: "C. 【购买情报】 (¥50)", impact_description: "保安收了烟，告诉你债主刀哥的行踪。", stat_changes: { money: -50, savviness: 1 }, requirements: { money: 50 } } 
+      { text: "C. 【购买情报】 (¥50)", impact_description: "保安收了烟，告诉你债主刀哥的行踪。", stat_changes: { money: -50, savviness: 1 }, requirements: { money: 50 } },
+      { text: "D. 【买醉放松】 (¥120)", impact_description: "酒精让你暂时忘记了那个叫刀哥的男人。", stat_changes: { money: -120, mood: 35, satiety: 5, hygiene: -10 }, requirements: { money: 120 } }
     ] 
   }},
   STATION: { ANY: { 
@@ -102,7 +104,8 @@ export const LOCATION_INTERACTIONS: Record<string, Record<string, AIRootResponse
     choices: [ 
       { text: "A. 【洗澡】 (¥15)", impact_description: "热水让你感到片刻安宁。", stat_changes: { money: -15, hygiene: 100, mood: 5 }, requirements: { money: 15 } }, 
       { text: "B. 【更衣室摸奖】 (需心眼>5)", impact_description: "你撬开了柜锁，拿走了里面的手表和现金。", stat_changes: { money: 250, sin: 15, mood: -20 }, requirements: { savviness: 5 } }, 
-      { text: "C. 【听墙根】", impact_description: "你在迷雾中偷听到大佬的谈话，获得了某些内幕。", stat_changes: { savviness: 1.5 } } 
+      { text: "C. 【听墙根】", impact_description: "你在迷雾中偷听到大佬的谈话，获得了某些内幕。", stat_changes: { savviness: 1.5 } },
+      { text: "D. 【桑拿按摩】 (¥150)", impact_description: "温热的蒸汽和粗鲁的按摩缓解了你灵魂的疲惫。", stat_changes: { money: -150, mood: 45, stamina: 0.5, hygiene: 20 }, requirements: { money: 150 } }
     ] 
   }},
 
@@ -121,7 +124,8 @@ export const LOCATION_INTERACTIONS: Record<string, Record<string, AIRootResponse
     choices: [ 
       { text: "A. 【进货】 (¥500)", impact_description: "你买了一些电子垃圾和盗版书。", stat_changes: { money: -500, savviness: 0.5 }, requirements: { money: 500 } }, 
       { text: "B. 【做搬运工】", impact_description: "纯卖力气，你的肩膀磨破了皮，但赚得多一些。", stat_changes: { money: 150, stamina: -4, hygiene: -30 } }, 
-      { text: "C. 【走私接头】", impact_description: "你帮人把违禁品藏在货车底盘运回黑岭。", stat_changes: { money: 2000, sin: 30, mood: -20, stamina: -1 } } 
+      { text: "C. 【走私接头】", impact_description: "你帮人把违禁品藏在货车底盘运回黑岭。", stat_changes: { money: 2000, sin: 30, mood: -20, stamina: -1 } },
+      { text: "D. 【路边摊盒饭】 (¥15)", impact_description: "虽然卫生堪忧，但量大管饱，填补了胃里的空虚。", stat_changes: { money: -15, satiety: 40, hygiene: -10 }, requirements: { money: 15 } }
     ] 
   }},
   CYBER: { ANY: { 
@@ -137,7 +141,7 @@ export const LOCATION_INTERACTIONS: Record<string, Record<string, AIRootResponse
     choices: [ 
       { text: "A. 【卖血】", impact_description: "抽完血后，你感到天旋地转，但救急够了。", stat_changes: { money: 800, stamina: -4, resilience: -1 } }, 
       { text: "B. 【购买“聪明药”】 (¥1200)", impact_description: "这种药能让你效率翻倍，但你会逐渐上瘾。", stat_changes: { money: -1200, academic: 40, mood: -10, stamina: -2 }, requirements: { money: 1200 } }, 
-      { text: "C. 【治疗隐疾】 (¥500)", impact_description: "你治疗了身体的创伤和隐疾。", stat_changes: { money: -500, motherHealth: 10 }, requirements: { money: 500 } } 
+      { text: "C. 【治疗隐疾】 (¥500)", impact_description: "你治疗了身体的创伤 and 隐疾。", stat_changes: { money: -500, motherHealth: 10 }, requirements: { money: 500 } } 
     ] 
   }},
   UNI: { ANY: { 
@@ -145,7 +149,8 @@ export const LOCATION_INTERACTIONS: Record<string, Record<string, AIRootResponse
     choices: [ 
       { text: "A. 【潜入旁听】 (需整洁>80)", impact_description: "你在教室后排听了一节课，学到了很多。", stat_changes: { academic: 20, intelligence: 0.5, mood: 15 }, requirements: { hygiene: 80 } }, 
       { text: "B. 【寻找“枪手”】 (¥10000)", impact_description: "中介收了钱，承诺会有人替考。", stat_changes: { money: -10000, sin: 50, mood: -30 }, requirements: { money: 10000 } }, 
-      { text: "C. 【钓鱼诈骗】", impact_description: "你伪装成学生骗取生活费，钱到账了。", stat_changes: { money: 500, savviness: 1, sin: 15 } } 
+      { text: "C. 【钓鱼诈骗】", impact_description: "你伪装成学生骗取生活费，钱到账了。", stat_changes: { money: 500, savviness: 1, sin: 15 } },
+      { text: "D. 【蹭学生食堂】 (¥12)", impact_description: "在青春洋溢的食堂里，你像个格格不入的幽灵。", stat_changes: { money: -12, satiety: 35, mood: 10 }, requirements: { money: 12 } }
     ] 
   }},
   HOTEL: { ANY: { 
@@ -153,7 +158,8 @@ export const LOCATION_INTERACTIONS: Record<string, Record<string, AIRootResponse
     choices: [ 
       { text: "A. 【高端局】 (需魅力>8)", impact_description: "你出卖了最后的尊严，灵魂彻底崩坏。", stat_changes: { money: 5000, mood: -100, sin: 80, appearance: 1 }, requirements: { appearance: 8 } }, 
       { text: "B. 【捉奸勒索】 (需心眼>7)", impact_description: "你拍下了权贵的丑闻，勒索成功。", stat_changes: { money: 15000, sin: 40, savviness: 2 }, requirements: { savviness: 7 } }, 
-      { text: "C. 【清洗罪证】 (¥10000)", impact_description: "你找律师抹去了案底。", stat_changes: { money: -10000, sin: -50 }, requirements: { money: 10000 } } 
+      { text: "C. 【清洗罪证】 (¥10000)", impact_description: "你找律师抹去了案底。", stat_changes: { money: -10000, sin: -50 }, requirements: { money: 10000 } },
+      { text: "D. 【海鲜自助】 (¥888)", impact_description: "昂贵的食材并未带给你多少快乐，只有腹部的充实感。", stat_changes: { money: -888, satiety: 100, mood: 30 }, requirements: { money: 888 } }
     ] 
   }},
 };
