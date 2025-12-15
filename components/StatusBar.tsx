@@ -14,9 +14,19 @@ const StatusBar: React.FC<Props> = ({ gameState, onMenuOpen, onPhoneOpen }) => {
   const { stats, day, timeOfDay, location, phone } = gameState;
   const unreadMessages = phone.messages.filter(m => !m.isRead).length;
 
-  const predictedScore = Math.min(750, Math.floor(stats.academic * 2.0 + stats.intelligence * 10 - stats.sin * 0.5));
+  // 高考分数预测逻辑 (满分 750)
+  const predictedScore = Math.min(750, Math.floor(stats.academic * 2.8 + stats.intelligence * 14 - stats.sin * 1.5));
   
-  const timeLabel = TIME_LABELS[timeOfDay];
+  const getPredictedSchool = (score: number) => {
+    if (score >= 680) return "C9联盟 / 定向选调";
+    if (score >= 610) return "重点一本 / 211院校";
+    if (score >= 530) return "普通本科 / 省属公办";
+    if (score >= 450) return "民办三本 / 职业技术";
+    if (score >= 380) return "技校预备 / 劳动力市场";
+    return "社会闲散 / 生存死局";
+  };
+
+  const predictedSchool = getPredictedSchool(predictedScore);
   
   const timeStyles: Record<string, string> = {
     MORNING: 'bg-slate-100 text-slate-900 border-slate-400',
@@ -25,69 +35,104 @@ const StatusBar: React.FC<Props> = ({ gameState, onMenuOpen, onPhoneOpen }) => {
     DUSK: 'bg-orange-950 text-orange-500 border-orange-800'
   };
 
-  const StatProgress = ({ label, value, colorClass }: { label: string, value: number, colorClass: string }) => (
-    <div className="flex flex-col gap-0.5 w-full">
+  const StatBar = ({ label, value, colorClass }: { label: string, value: number, colorClass: string }) => (
+    <div className="flex flex-col flex-1 gap-1">
       <div className="flex justify-between items-center px-0.5">
-        <span className="text-[6px] font-black uppercase tracking-tighter text-slate-500">{label}</span>
-        <span className="text-[7px] font-mono font-black">{Math.round(value)}</span>
+        <span className="text-[7px] font-black text-slate-500 uppercase tracking-tighter leading-none">{label}</span>
+        <span className="text-[9px] font-mono font-black leading-none">{Math.round(value)}</span>
       </div>
-      <div className="h-1 bg-black/10 relative overflow-hidden">
-        <div className={`absolute inset-y-0 left-0 ${colorClass} transition-all duration-500`} style={{ width: `${Math.min(100, Math.max(0, value))}%` }} />
+      <div className="h-1 bg-black/5 relative overflow-hidden">
+        <div className={`absolute inset-y-0 left-0 ${colorClass} transition-all duration-700`} style={{ width: `${Math.min(100, Math.max(0, value))}%` }} />
       </div>
     </div>
   );
 
+  const MiniAttr = ({ label, value, color }: { label: string, value: number | string, color?: string }) => (
+    <div className="flex flex-col items-center min-w-[34px]">
+      <span className="text-[6px] font-black text-slate-400 uppercase leading-none mb-0.5">{label}</span>
+      <span className={`text-[9px] font-black italic leading-none ${color || 'text-black'}`}>{value}</span>
+    </div>
+  );
+
   return (
-    <div className="fixed top-0 left-0 right-0 z-50 flex flex-col select-none bg-white shadow-2xl">
-      <div className="bg-black text-white px-4 h-10 flex items-center justify-between border-b-2 border-black">
-        <div className="flex items-center gap-3">
-          <span className="text-[14px] font-black italic leading-none">第 {day.toString().padStart(2, '0')} 天</span>
-          <div className={`px-2 py-0.5 border-2 rounded-sm text-[10px] font-black italic transition-all ${timeStyles[timeOfDay] || 'bg-white text-black border-black'}`}>{timeLabel}</div>
-          <span className="text-[9px] font-black text-red-500 animate-pulse">高考: {30-day}天</span>
+    <div className="fixed top-0 left-0 right-0 z-50 flex flex-col select-none bg-white border-b-[4px] border-black shadow-2xl">
+      {/* 分区 1: 时间/环境/控制 */}
+      <div className="bg-black text-white px-3 h-8 flex items-center justify-between">
+        <div className="flex items-center gap-2">
+          <span className="text-xs font-black italic tracking-tighter">第 {day} 天</span>
+          <div className={`px-1.5 py-0.5 border text-[7px] font-black uppercase ${timeStyles[timeOfDay]}`}>
+            {TIME_LABELS[timeOfDay]}
+          </div>
+          <span className="text-[7px] font-black text-red-500 animate-pulse uppercase">离高考 {30-day} 天</span>
+          <span className="text-[7px] font-black text-slate-500 ml-1 truncate max-w-[80px] border-l border-white/20 pl-2">{location}</span>
         </div>
         <div className="flex items-center gap-4">
           <button onClick={onPhoneOpen} className="relative active:scale-90 transition-transform">
-             <span className="text-xl">✉</span>
-             {unreadMessages > 0 && <span className="absolute -top-1 -right-1 w-3 h-3 bg-red-600 rounded-full border-2 border-black animate-bounce"></span>}
+             <span className="text-lg">✉</span>
+             {unreadMessages > 0 && <span className="absolute -top-1 -right-1 w-2 h-2 bg-red-600 rounded-full border border-black animate-bounce"></span>}
           </button>
-          <button onClick={onMenuOpen} className="text-lg">☰</button>
+          <button onClick={onMenuOpen} className="text-base">☰</button>
         </div>
       </div>
 
-      <div className="bg-white border-b-2 border-black flex items-stretch h-16">
-        <div className="flex items-stretch border-r border-black/10">
-          <div className="w-16 h-full relative border-r border-black/10">
-             <ArtisticAvatar speakerId="PLAYER" className="w-full h-full grayscale opacity-80" />
-          </div>
-          <div className="flex flex-col justify-center px-3">
-            <span className="text-[6px] font-black text-slate-400 uppercase leading-none mb-1">生存金</span>
-            <div className="flex items-baseline gap-0.5 text-lg font-mono font-black italic">
-              <span className="opacity-30">¥</span>{stats.money}
+      {/* 分区 2: 经济命脉 (现金与债务) */}
+      <div className="flex items-stretch bg-white border-b border-black/10 h-12">
+        <div className="w-12 border-r border-black/10 flex items-center justify-center p-0.5 bg-slate-50">
+          <ArtisticAvatar speakerId="PLAYER" className="w-full h-full grayscale opacity-90" />
+        </div>
+        <div className="flex-1 flex items-center px-4 justify-between">
+          <div className="flex gap-6">
+            <div className="flex flex-col">
+              <span className="text-[6px] font-black text-slate-400 uppercase leading-none mb-1">可用现金</span>
+              <span className="text-base font-mono font-black italic leading-none">¥{stats.money}</span>
+            </div>
+            <div className="flex flex-col">
+              <span className="text-[6px] font-black text-red-500 uppercase leading-none mb-1">本期应还</span>
+              <span className="text-base font-mono font-black text-red-700 leading-none">¥{stats.debt}</span>
             </div>
           </div>
-        </div>
-        <div className="flex-1 flex justify-around items-center px-2">
-          <div className="flex flex-col items-center"><span className="text-[5px] text-slate-400 font-black">智力</span><span className="text-sm font-black italic">{stats.intelligence}</span></div>
-          <div className="flex flex-col items-center"><span className="text-[5px] text-slate-400 font-black">魅力</span><span className="text-sm font-black italic text-rose-600">{stats.appearance}</span></div>
-          <div className="flex flex-col items-center"><span className="text-[5px] text-slate-400 font-black">心计</span><span className="text-sm font-black italic text-cyan-700">{stats.corruption}</span></div>
-          <div className="flex flex-col items-center"><span className="text-[5px] text-slate-400 font-black">罪恶</span><span className="text-sm font-black italic text-red-900">{stats.sin}</span></div>
-        </div>
-        <div className="border-l border-black/10 flex flex-col justify-center px-4 text-right">
-           <span className="text-[8px] font-black truncate max-w-[70px] leading-none mb-1 uppercase">{location}</span>
-           <div className="bg-black text-white px-1.5 py-0.5 text-[10px] font-black italic skew-x-[-10deg]">预计总分: {predictedScore}</div>
+          <div className="flex flex-col items-end opacity-20">
+             <span className="text-[6px] font-black text-slate-400 uppercase mb-1">总负债</span>
+             <span className="text-[10px] font-mono font-black leading-none">¥{stats.totalDebt}</span>
+          </div>
         </div>
       </div>
 
-      <div className="bg-slate-50 border-b-4 border-black px-4 h-8 flex items-center gap-2">
-        <StatProgress label="饱腹" value={stats.satiety} colorClass="bg-orange-800" />
-        <StatProgress label="精神" value={stats.mood} colorClass="bg-indigo-800" />
-        <StatProgress label="学业" value={stats.academic} colorClass="bg-emerald-800" />
-        <StatProgress label="整洁" value={stats.hygiene} colorClass="bg-sky-800" />
-        <div className="flex flex-col gap-0.5 w-1/3">
-           <div className="flex justify-between px-0.5"><span className="text-[6px] font-black text-red-800 uppercase">债务</span><span className="text-[7px] font-mono font-black">{stats.debt}</span></div>
-           <div className="h-1 bg-red-100 relative">
-             <div className="absolute inset-y-0 left-0 bg-red-800 transition-all duration-500" style={{ width: `${Math.min(100, (stats.debt / 5000) * 100)}%` }} />
-           </div>
+      {/* 分区 3: 生存状态 */}
+      <div className="bg-slate-50 px-3 py-1.5 flex gap-3 border-b border-black/5">
+        <StatBar label="饱腹" value={stats.satiety} colorClass="bg-orange-800" />
+        <StatBar label="体力" value={stats.stamina} colorClass="bg-emerald-700" />
+        <StatBar label="精神" value={stats.mood} colorClass="bg-indigo-800" />
+        <StatBar label="整洁" value={stats.hygiene} colorClass="bg-sky-700" />
+      </div>
+
+      {/* 分区 4: 核心属性与特殊指标 */}
+      <div className="p-2 flex flex-col gap-2 bg-white border-b border-black/5">
+        <div className="flex justify-between items-center px-0.5">
+          {/* 核心属性组 - 个位数范围 */}
+          <div className="flex gap-2.5">
+            <MiniAttr label="智力" value={stats.intelligence} />
+            <MiniAttr label="魅力" value={stats.appearance} color="text-rose-600" />
+            <MiniAttr label="心眼" value={stats.savviness} color="text-zinc-900" />
+            <MiniAttr label="韧性" value={stats.resilience} color="text-amber-600" />
+          </div>
+          {/* 特殊指标区 - 视觉区分 */}
+          <div className="flex gap-2.5 border-l-2 border-black/10 pl-3">
+            <MiniAttr label="罪恶" value={stats.sin} color="text-red-900" />
+            <MiniAttr label="母亲" value={stats.motherHealth} color="text-rose-800" />
+          </div>
+        </div>
+      </div>
+
+      {/* 分区 5: 高考拟投档预测 */}
+      <div className="bg-slate-100 p-1.5 flex justify-between items-center px-2">
+        <div className="flex items-baseline gap-1.5">
+          <span className="text-[7px] font-black text-slate-400 uppercase">学业水平 {stats.academic}</span>
+          <span className="text-[7px] font-black text-slate-400 uppercase ml-2">预计总分</span>
+          <span className="text-xs font-black italic text-black leading-none">{predictedScore}</span>
+        </div>
+        <div className="bg-black text-white px-2 py-0.5 text-[8px] font-black italic skew-x-[-12deg] tracking-tighter uppercase">
+          拟投档：{predictedSchool}
         </div>
       </div>
     </div>

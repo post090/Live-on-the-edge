@@ -36,14 +36,13 @@ const PhoneSystem: React.FC<Props> = ({ gameState, onUpdateStats, onClose, onMar
   };
 
   const handleGrayTask = (task: any) => {
-    if (gameState.stats.corruption < 30) {
-      alert("纸飞机：你还没学会如何像一个阴影里的掠食者那样思考。心计不足。");
+    if (gameState.stats.savviness < 5) {
+      alert("纸飞机：你还没学会如何像一个阴影里的掠食者那样思考。心眼不足。");
       return;
     }
     if (confirm(`【加密指令】是否接取任务“${task.name}”？\n风险级别：${task.risk}`)) {
       onUpdateStats({ 
         money: task.reward, 
-        corruption: task.corruption, 
         stamina: task.stamina, 
         sin: task.sin, 
         mood: -15 
@@ -53,11 +52,11 @@ const PhoneSystem: React.FC<Props> = ({ gameState, onUpdateStats, onClose, onMar
   };
 
   const handleYueYue = (user: any) => {
-    if (gameState.stats.appearance < 60 && user.id === 'u1') {
+    if (gameState.stats.appearance < 8 && user.id === 'u1') {
       alert("约约：对方看了你的头像，把你屏蔽了。魅力不足。");
       return;
     }
-    if (confirm(`与“${user.name}”面基？距离：${user.dist}`)) {
+    if (confirm(`与“${user.name}”见面？距离：${user.dist}`)) {
       onUpdateStats(user.impact);
       alert(`在这个冰冷的夜晚，你与陌生人交换了某种东西。${user.impact.money ? '钱到账了，但你不敢照镜子。' : '至少胃里不再那么疼了。'}`);
     }
@@ -136,7 +135,7 @@ const PhoneSystem: React.FC<Props> = ({ gameState, onUpdateStats, onClose, onMar
                <span className="text-xs text-amber-700 font-mono">¥{p.price}</span>
             </div>
             <p className="text-[9px] text-slate-400 mb-3">{p.description}</p>
-            <button onClick={() => handlePurchase(p)} className="w-full py-1.5 bg-black text-white text-[9px] font-black uppercase tracking-widest active:bg-slate-800">加入购物车并结算</button>
+            <button onClick={() => handlePurchase(p)} className="w-full py-1.5 bg-black text-white text-[9px] font-black uppercase tracking-widest active:bg-slate-800">结算</button>
           </div>
         ))}
       </div>
@@ -148,13 +147,13 @@ const PhoneSystem: React.FC<Props> = ({ gameState, onUpdateStats, onClose, onMar
       <div className="p-4 bg-yellow-600 text-white border-b-4 border-black font-black italic">小借贷 // 负债评估</div>
       <div className="p-6">
         <div className="bg-white border-4 border-black p-4 mb-8 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
-           <span className="text-[10px] font-black opacity-50">累计债务上限</span>
+           <span className="text-[10px] font-black opacity-50">总债务</span>
            <div className="text-3xl font-mono font-black text-red-600">¥{gameState.stats.totalDebt}</div>
-           <div className="mt-2 text-[8px] text-slate-400">当前持有现金：¥{gameState.stats.money}</div>
+           <div className="mt-2 text-[8px] text-slate-400">可用现金：¥{gameState.stats.money}</div>
         </div>
         <div className="space-y-4">
            <button onClick={() => handleBorrow(1000)} className="btn-flat w-full py-4 text-xs font-black border-yellow-800 bg-white">紧急周转金 ¥1000 (利息 50%)</button>
-           <button onClick={() => handleBorrow(5000)} className="btn-flat w-full py-4 text-xs font-black border-yellow-800 bg-white">“一步到位”贷 ¥5000 (利息 50%)</button>
+           <button onClick={() => handleBorrow(5000)} className="btn-flat w-full py-4 text-xs font-black border-yellow-800 bg-white">短期大额贷 ¥5000 (利息 50%)</button>
         </div>
       </div>
     </div>
@@ -166,7 +165,7 @@ const PhoneSystem: React.FC<Props> = ({ gameState, onUpdateStats, onClose, onMar
       <div className="relative w-full max-w-[320px] h-[640px] bg-slate-900 border-[8px] border-black rounded-[40px] flex flex-col overflow-hidden animate-up shadow-2xl">
         <div className="flex-1 m-2 bg-white rounded-[30px] flex flex-col overflow-hidden relative border-4 border-slate-800">
            <div className="h-6 bg-black text-white px-6 flex items-center justify-between text-[7px] font-black shrink-0">
-              <div>3G 网络 📶</div>
+              <div>移动网络 📶</div>
               <div className="font-mono">{new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false })}</div>
               <div>🔋 28%</div>
            </div>
@@ -178,8 +177,8 @@ const PhoneSystem: React.FC<Props> = ({ gameState, onUpdateStats, onClose, onMar
               {activeApp === 'TG' && (
                 <div className="flex-1 bg-slate-950 text-cyan-400 p-4 font-mono overflow-y-auto no-scrollbar">
                   <div className="mb-4 text-xs font-black border-b border-cyan-800 pb-2 flex justify-between">
-                    <span>加密通讯 // TG</span>
-                    <span className="animate-pulse">● 运行中</span>
+                    <span>加密协议 // TG</span>
+                    <span className="animate-pulse">● 已加密</span>
                   </div>
                   {GRAY_TASKS.map(task => (
                     <div key={task.id} className="mb-4 border border-cyan-900 p-3 bg-black/60 relative overflow-hidden group">
@@ -188,7 +187,7 @@ const PhoneSystem: React.FC<Props> = ({ gameState, onUpdateStats, onClose, onMar
                         <span className="text-emerald-500">¥{task.reward}</span>
                       </div>
                       <p className="text-[8px] text-cyan-200/60 mb-3 leading-relaxed">“{task.desc}”</p>
-                      <button onClick={() => handleGrayTask(task)} className="w-full py-1.5 bg-cyan-950 border border-cyan-500 text-cyan-400 text-[9px] font-black hover:bg-cyan-500 hover:text-black transition-colors uppercase tracking-widest">接受协议</button>
+                      <button onClick={() => handleGrayTask(task)} className="w-full py-1.5 bg-cyan-950 border border-cyan-500 text-cyan-400 text-[9px] font-black hover:bg-cyan-500 hover:text-black transition-colors uppercase tracking-widest">接收指令</button>
                     </div>
                   ))}
                 </div>
@@ -212,7 +211,7 @@ const PhoneSystem: React.FC<Props> = ({ gameState, onUpdateStats, onClose, onMar
                 <div className="flex-1 bg-black text-white p-6 flex flex-col justify-center gap-8">
                   <div className="text-center border-4 border-white py-4 font-black italic text-2xl tracking-tighter">快见视频</div>
                   <div className="space-y-4">
-                    <button onClick={() => { onUpdateStats({ mood: 10, stamina: -5 }); alert("沉浸在奶头乐中，你获得了短暂的宁静。精神 +10"); }} className="w-full py-6 border-4 border-white font-black text-sm uppercase tracking-widest hover:bg-white hover:text-black">沉溺刷片</button>
+                    <button onClick={() => { onUpdateStats({ mood: 10, stamina: -5 }); alert("沉浸在奶头乐中，你获得了短暂的宁静。精神 +10"); }} className="w-full py-6 border-4 border-white font-black text-sm uppercase tracking-widest hover:bg-white hover:text-black">刷短视频</button>
                     <button onClick={() => { 
                       if(gameState.stats.stamina < 30) { alert("你太虚弱了，直播间观众说你看上去像个死人。"); return; }
                       onUpdateStats({ money: 200, stamina: -30, sin: 5, mood: -10 }); 

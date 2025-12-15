@@ -23,7 +23,6 @@ export interface Stats {
   debt: number; // 本期还款目标
   totalDebt: number; // 总债务
   academic: number;
-  corruption: number; // 心计
   sin: number; // 罪恶
   stamina: number; // 体力
   resilience: number; // 韧性
