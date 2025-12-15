@@ -1,6 +1,6 @@
+
 import React, { useState, useEffect, useRef } from 'react';
 import { GameState, Attributes, AIRootResponse, Stats, AvatarConfig, LocationInfo, Choice } from './types';
-// Fixed: Removed non-existent RANDOM_EVENTS export from constants
 import { INITIAL_GAME_STATE, TIME_ORDER, LOCATIONS, TIME_LABELS, LOCATION_INTERACTIONS, DAYS_OF_WEEK, FAINT_EVENTS } from './constants';
 import { getLocalStatusSummary } from './logic/statusSystem';
 import CharacterCreation from './components/CharacterCreation';
@@ -48,9 +48,8 @@ const App: React.FC = () => {
         ...INITIAL_GAME_STATE.stats,
         intelligence: attr.intelligence,
         appearance: attr.appearance,
-        // 体力换算成 100 分制
-        stamina: 50 + attr.stamina * 5,
-        // 其它属性（包括韧性）维持个位数
+        // 体力不再换算，直接使用个位数
+        stamina: attr.stamina,
         resilience: attr.resilience,
         savviness: attr.savviness
       }
@@ -73,10 +72,9 @@ const App: React.FC = () => {
   const finishPrologue = () => {
     if (!gameState || !prologueChoice) return;
     let changes: Partial<Stats> = {};
-    // 序章属性变动严格控制在个位数
     if (prologueChoice === 'A') changes = { mood: -5, resilience: 1, satiety: -2 };
     else if (prologueChoice === 'B') changes = { mood: -8, money: 9 };
-    else if (prologueChoice === 'C') changes = { stamina: -8, sin: 3, intelligence: 1 };
+    else if (prologueChoice === 'C') changes = { stamina: -1, sin: 3, intelligence: 1 };
 
     const ns = { ...gameState.stats };
     Object.entries(changes).forEach(([k, v]) => {
@@ -136,9 +134,10 @@ const App: React.FC = () => {
       newStats[k] = Math.max(0, (newStats[k] || 0) + (val as number));
     });
 
+    // 调整自然消耗以匹配个位数体力和百分制状态
     newStats.satiety = Math.max(0, newStats.satiety - 12); 
     newStats.mood = Math.max(0, newStats.mood - 10);
-    newStats.stamina = Math.max(0, newStats.stamina - 10);
+    newStats.stamina = Math.max(0, newStats.stamina - 0.5); // 个位数消耗更缓慢
     if (!newFlags.isMotherDead) newStats.motherHealth = Math.max(0, newStats.motherHealth - 2);
 
     const currentTimeIdx = TIME_ORDER.indexOf(gameState.timeOfDay);
@@ -153,6 +152,13 @@ const App: React.FC = () => {
     if (nextDay > 30) {
       setScreen('ENDING'); 
       return;
+    }
+
+    // 体力耗尽昏迷逻辑 (个位数时 threshold 设为 0.5)
+    if (newStats.stamina < 0.5) {
+      const faintEvent = FAINT_EVENTS.DEFAULT;
+      setCurrentEvent(faintEvent);
+      // 后续由昏迷抉择重置状态
     }
 
     const newState: GameState = {
@@ -244,7 +250,7 @@ const App: React.FC = () => {
                 </button>
                 <button onClick={() => handlePrologueChoice('C')} className="w-full group flex flex-col items-start p-4 bg-black border-2 border-white/30 hover:border-white transition-all text-left">
                   <span className="text-red-500 text-xs font-black italic mb-1">🔴 选项 C：【冷眼对视】</span>
-                  <span className="text-white/80 text-sm font-bold group-hover:text-white">死死盯着。（罪恶+3, 体力-8）</span>
+                  <span className="text-white/80 text-sm font-bold group-hover:text-white">死死盯着。（罪恶+3, 体力-1）</span>
                 </button>
              </div>
           </div>

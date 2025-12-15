@@ -63,7 +63,7 @@ const StatusBar: React.FC<Props> = ({ gameState, onMenuOpen, onPhoneOpen }) => {
           <div className={`px-1.5 py-0.5 border text-[7px] font-black uppercase ${timeStyles[timeOfDay]}`}>
             {TIME_LABELS[timeOfDay]}
           </div>
-          <span className="text-[7px] font-black text-red-500 animate-pulse uppercase">离高考 {30-day} 天</span>
+          <span className="text-[7px] font-black text-red-500 animate-pulse uppercase">剩 {30-day} 天</span>
           <span className="text-[7px] font-black text-slate-500 ml-1 truncate max-w-[80px] border-l border-white/20 pl-2">{location}</span>
         </div>
         <div className="flex items-center gap-4">
@@ -83,7 +83,7 @@ const StatusBar: React.FC<Props> = ({ gameState, onMenuOpen, onPhoneOpen }) => {
         <div className="flex-1 flex items-center px-4 justify-between">
           <div className="flex gap-6">
             <div className="flex flex-col">
-              <span className="text-[6px] font-black text-slate-400 uppercase leading-none mb-1">可用现金</span>
+              <span className="text-[6px] font-black text-slate-400 uppercase leading-none mb-1">现金</span>
               <span className="text-base font-mono font-black italic leading-none">¥{stats.money}</span>
             </div>
             <div className="flex flex-col">
@@ -92,34 +92,34 @@ const StatusBar: React.FC<Props> = ({ gameState, onMenuOpen, onPhoneOpen }) => {
             </div>
           </div>
           <div className="flex flex-col items-end opacity-20">
-             <span className="text-[6px] font-black text-slate-400 uppercase mb-1">总负债</span>
+             <span className="text-[6px] font-black text-slate-400 uppercase mb-1">总欠款</span>
              <span className="text-[10px] font-mono font-black leading-none">¥{stats.totalDebt}</span>
           </div>
         </div>
       </div>
 
-      {/* 分区 3: 生存状态 */}
+      {/* 分区 3: 状态 (饱腹/精神/整洁/母亲健康) */}
       <div className="bg-slate-50 px-3 py-1.5 flex gap-3 border-b border-black/5">
         <StatBar label="饱腹" value={stats.satiety} colorClass="bg-orange-800" />
-        <StatBar label="体力" value={stats.stamina} colorClass="bg-emerald-700" />
         <StatBar label="精神" value={stats.mood} colorClass="bg-indigo-800" />
         <StatBar label="整洁" value={stats.hygiene} colorClass="bg-sky-700" />
+        <StatBar label="母亲" value={stats.motherHealth} colorClass="bg-rose-800" />
       </div>
 
-      {/* 分区 4: 核心属性与特殊指标 */}
+      {/* 分区 4: 属性 (体力/智力/魅力/心眼/韧性) 与 罪恶 */}
       <div className="p-2 flex flex-col gap-2 bg-white border-b border-black/5">
         <div className="flex justify-between items-center px-0.5">
-          {/* 核心属性组 - 个位数范围 */}
+          {/* 核心属性组 - 全个位数 */}
           <div className="flex gap-2.5">
+            <MiniAttr label="体力" value={stats.stamina} color="text-emerald-700" />
             <MiniAttr label="智力" value={stats.intelligence} />
             <MiniAttr label="魅力" value={stats.appearance} color="text-rose-600" />
             <MiniAttr label="心眼" value={stats.savviness} color="text-zinc-900" />
             <MiniAttr label="韧性" value={stats.resilience} color="text-amber-600" />
           </div>
-          {/* 特殊指标区 - 视觉区分 */}
+          {/* 特殊区隔 */}
           <div className="flex gap-2.5 border-l-2 border-black/10 pl-3">
             <MiniAttr label="罪恶" value={stats.sin} color="text-red-900" />
-            <MiniAttr label="母亲" value={stats.motherHealth} color="text-rose-800" />
           </div>
         </div>
       </div>

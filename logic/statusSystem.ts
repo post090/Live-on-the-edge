@@ -19,11 +19,11 @@ export const getLocalStatusSummary = (state: GameState): string => {
   }
 
   // --- 1. 濒死 / 崩溃层 ---
-  if (stats.stamina < 10) {
+  if (stats.stamina < 1) {
     return "肺里像是塞满了烧红的煤渣，每一次呼吸都带着铁锈味。视线开始模糊了……如果不找个地方躺下，这可能就是最后一次看这张地图。";
   }
   if (stats.mood < 10) {
-    if (stats.sin > 5) {
+    if (stats.sin > 3) {
       return "那些建筑……它们在呼吸。学校的窗户像是无数只眼睛死死盯着你。刀哥的笑声就在耳边，但他明明不在这一带。必须找个地方躲起来。";
     } else {
       return "谁在说话？闭嘴。地图上的字都在跳舞。我不记得我要去哪了，或许跳进矿坑里是个好主意？那里看起来暖和极了。";
@@ -43,8 +43,8 @@ export const getLocalStatusSummary = (state: GameState): string => {
     return "手机又震动了，不用看也知道是催债的。地图上每一个地点都像是一个可能的提款机，或者坟墓。只要能搞到钱，做什么都行。";
   }
 
-  // --- 4. 堕落 / 暴富层 (移除心计逻辑) ---
-  if (stats.sin > 6 && stats.money > 5000) {
+  // --- 4. 堕落 / 暴富层 ---
+  if (stats.sin > 4 && stats.money > 5000) {
     if (state.currentArea === 'PROVINCIAL_CAPITAL') {
       return "黑岭太小了。省城的灯红酒绿才是你应该去的地方。至于那些还在死读书的傻瓜……让他们烂在泥里吧。";
     }
