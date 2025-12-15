@@ -25,7 +25,7 @@ const Inventory: React.FC<Props> = ({ gameState, onClose }) => {
           {products.length === 0 ? (
             <div className="h-full flex flex-col items-center justify-center text-center opacity-30">
               <span className="text-5xl mb-4">🎒</span>
-              <p className="text-xs font-black italic font-serif">包里空空如也，正如你苍白的人生。</p>
+              <p className="text-xs font-black italic font-serif">包里空空如也。</p>
             </div>
           ) : (
             <div className="space-y-4">

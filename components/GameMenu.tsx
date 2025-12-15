@@ -65,7 +65,7 @@ const GameMenu: React.FC<Props> = ({ isOpen, onClose, gameState, onLoad, onResta
           </button>
 
           <button 
-            onClick={() => { if(confirm("你确定要重置这段人生吗？所有未保存的苦难都将消失。")) onRestart(); }}
+            onClick={() => { if(confirm("你确定要重置这段人生吗？")) onRestart(); }}
             className="btn-flat w-full py-6 text-left px-8 text-xl border-black text-red-600 hover:bg-red-50 flex justify-between items-center border-[4px]"
           >
             <div className="flex items-center gap-3">
